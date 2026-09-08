@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sahil's Blackjack — Neon Edge</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Pinyon+Script&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Yellowtail&display=swap');
 
   :root{
     --bg-0:#07070a;
@@ -249,13 +249,13 @@
     border-radius:5px;
   }
   .card.back .back-mark{
-    font-family:'Pinyon Script', cursive;
-    font-size:2.4rem;
+    font-family:'Yellowtail', cursive;
+    font-size:2rem;
     color:var(--cyan);
     text-shadow:0 0 10px rgba(51,246,232,0.75), 0 0 22px rgba(51,246,232,0.4);
     position:relative;
     z-index:1;
-    transform:translateY(-2px);
+    transform:translateY(-1px);
   }
 
   .divider{
@@ -575,7 +575,7 @@
     .card{width:58px; height:84px; font-size:0.88rem;}
     .card .suit-big{font-size:1.3rem;}
     .card .corner{font-size:0.68rem;}
-    .card.back .back-mark{font-size:1.7rem;}
+    .card.back .back-mark{font-size:1.4rem;}
     .sidebet{width:140px;}
   }
 </style>
@@ -650,10 +650,16 @@
             <button class="quick" id="doubleBetBtn" type="button">2×</button>
           </div>
         </div>
-        <div class="betcontrols">
+        <div class="betcontrols" id="betControlsRow">
           <button class="btn" id="repeatBtn" disabled>Repeat</button>
           <button class="btn danger" id="clearBtn">Clear</button>
           <button class="btn primary wide" id="dealBtn" disabled>Deal</button>
+        </div>
+        <div class="actionrow" id="actionRow" style="display:none;">
+          <button class="btn" id="hitBtn">Hit</button>
+          <button class="btn" id="standBtn">Stand</button>
+          <button class="btn" id="doubleBtn">Double</button>
+          <button class="btn" id="splitBtn">Split</button>
         </div>
       </div>
 
@@ -671,13 +677,6 @@
           Straight <b>10:1</b> · Flush <b>5:1</b>
         </div>
       </div>
-    </div>
-
-    <div class="actionrow" id="actionRow" style="display:none;">
-      <button class="btn" id="hitBtn">Hit</button>
-      <button class="btn" id="standBtn">Stand</button>
-      <button class="btn" id="doubleBtn">Double</button>
-      <button class="btn" id="splitBtn">Split</button>
     </div>
   </div>
 
@@ -1088,6 +1087,7 @@
     phase = 'dealing';
 
     el('actionRow').style.display='none';
+    el('betControlsRow').style.display='none';
     disableBetControls(true);
     disableActionButtons(true);
 
@@ -1415,6 +1415,8 @@
     el('playerHands').innerHTML = '';
     el('dealerScore').textContent = '0';
     el('dealerScore').className = 'score-pill';
+    el('actionRow').style.display = 'none';
+    el('betControlsRow').style.display = 'flex';
 
     disableBetControls(false);
     renderBetRail();
