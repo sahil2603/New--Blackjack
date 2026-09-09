@@ -8,22 +8,21 @@
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Yellowtail&display=swap');
 
   :root{
-    --bg-0:#07070a;
-    --bg-1:#0d0d12;
-    --felt:#0a0e0d;
+    --bg-0:#06070a;
     --panel:#111116;
     --panel-2:#16161d;
     --line:#26262f;
-    --ink:#e8e8ee;
+    --ink:#eef0f4;
     --ink-dim:#8b8b98;
     --cyan:#33f6e8;
     --cyan-dim:#1a8a82;
+    --purple:#a855f7;
     --magenta:#ff4fd8;
     --magenta-dim:#8a2c78;
     --gold:#ffd166;
     --danger:#ff5470;
-    --card-red:#ff2e4d;
-    --card-face:#111114;
+    --win:#5affc2;
+    --card-face:#111318;
     font-size:17px;
   }
 
@@ -31,33 +30,54 @@
   html,body{height:100%;}
   body{
     margin:0;
-    background:
-      radial-gradient(1200px 700px at 50% -10%, #10141a 0%, var(--bg-0) 55%),
-      var(--bg-0);
+    background:var(--bg-0);
     color:var(--ink);
     font-family:'Space Grotesk', system-ui, sans-serif;
     min-height:100vh;
     overflow-x:hidden;
+    position:relative;
   }
-  .display{font-family:'Oxanium', 'Space Grotesk', sans-serif;}
 
-  /* ===== Shell ===== */
+  /* ===== ambient particles ===== */
+  #ambient{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .particle{
+    position:absolute;
+    bottom:-10px;
+    border-radius:50%;
+    opacity:0.35;
+    animation:floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    10%{ opacity:0.35; }
+    90%{ opacity:0.2; }
+    100%{ transform:translateY(-115vh) translateX(var(--drift,20px)); opacity:0; }
+  }
+
   .shell{
     max-width:980px;
     margin:0 auto;
     padding:14px 14px 26px;
+    position:relative;
+    z-index:1;
   }
 
   .topbar{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-bottom:10px;
+    margin-bottom:12px;
   }
   .brand{
     display:flex;
     align-items:baseline;
     gap:8px;
+    flex-wrap:wrap;
   }
   .brand .mark{
     font-family:'Oxanium', sans-serif;
@@ -69,24 +89,33 @@
     line-height:1.15;
   }
   .brand .mark span{color:var(--cyan);}
-  .brand .tag{color:var(--ink-dim); font-size:0.78rem;}
+  .brand .tag{color:var(--ink-dim); font-size:0.76rem;}
 
   .hud{display:flex; align-items:center; gap:10px;}
-  .balance{
-    background:linear-gradient(180deg, #17171d, var(--panel));
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:8px 14px;
-    font-family:'Oxanium', sans-serif;
-    font-weight:700;
-    font-size:1rem;
+
+  .balance-hud{
     display:flex;
     align-items:center;
-    gap:8px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+    gap:10px;
+    background:linear-gradient(160deg, #1a1a22, #101014);
+    border:1px solid rgba(255,209,102,0.28);
+    border-radius:14px;
+    padding:7px 16px 7px 10px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
   }
-  .balance .lbl{color:var(--ink-dim); font-weight:500; font-size:0.68rem; letter-spacing:0.6px;}
-  .balance .val{color:var(--gold); text-shadow:0 0 10px rgba(255,209,102,0.5);}
+  .balance-hud .coin{
+    width:30px; height:30px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff6d8, var(--gold) 55%, #a9750a 100%);
+    box-shadow:0 0 12px rgba(255,209,102,0.65), inset 0 -2px 3px rgba(0,0,0,0.25);
+    flex:0 0 auto;
+  }
+  .balance-hud .balance-text{display:flex; flex-direction:column; line-height:1.05;}
+  .balance-hud .lbl{font-size:0.6rem; color:var(--ink-dim); letter-spacing:1.2px; font-weight:600;}
+  .balance-hud .val{
+    font-family:'Oxanium',sans-serif; font-weight:800; font-size:1.28rem;
+    color:var(--gold); text-shadow:0 0 12px rgba(255,209,102,0.5);
+    font-variant-numeric:tabular-nums;
+  }
 
   .iconbtn{
     width:38px; height:38px;
@@ -97,40 +126,104 @@
     cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     transition:border-color .15s, color .15s;
+    flex:0 0 auto;
   }
   .iconbtn:hover{border-color:var(--cyan-dim); color:var(--cyan);}
 
-  /* ===== Table ===== */
+  /* ===== Table: premium felt environment ===== */
   .table{
     position:relative;
+    border-radius:20px;
+    padding:18px 14px 14px;
+    overflow:hidden;
+    border:1px solid rgba(51,246,232,0.16);
     background:
-      radial-gradient(600px 300px at 50% 0%, rgba(51,246,232,0.06), transparent 70%),
-      linear-gradient(180deg, var(--panel) 0%, var(--felt) 100%);
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:14px 12px 12px;
+      radial-gradient(130% 130% at 50% 45%, transparent 45%, rgba(0,0,0,0.55) 100%),
+      radial-gradient(340px 460px at -4% 45%, rgba(51,246,232,0.09), transparent 65%),
+      radial-gradient(340px 460px at 104% 55%, rgba(168,85,247,0.09), transparent 65%),
+      radial-gradient(520px 320px at 50% 42%, rgba(51,246,232,0.07), transparent 72%),
+      linear-gradient(160deg, #0c1720 0%, #081119 48%, #05080d 100%);
     box-shadow:
-      inset 0 0 60px rgba(0,0,0,0.5),
+      inset 0 0 70px rgba(0,0,0,0.55),
       inset 0 1px 0 rgba(255,255,255,0.05),
-      0 24px 48px rgba(0,0,0,0.5),
-      0 0 0 1px rgba(51,246,232,0.04);
+      0 0 0 1px rgba(168,85,247,0.05),
+      0 24px 56px rgba(0,0,0,0.55);
+    transition:box-shadow .35s ease;
   }
   .table::before{
     content:'';
     position:absolute;
     top:0; left:14px; right:14px; height:1px;
-    background:linear-gradient(90deg, transparent, rgba(255,209,102,0.35), rgba(51,246,232,0.35), transparent);
+    background:linear-gradient(90deg, transparent, rgba(255,209,102,0.3), rgba(51,246,232,0.35), transparent);
+    z-index:2;
+  }
+  .table::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:1;
+  }
+  .sweep{
+    position:absolute;
+    top:-20%; left:-60%;
+    width:45%; height:140%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,0.035), transparent);
+    transform:rotate(8deg);
+    animation:sweepMove 7s ease-in-out infinite;
+    pointer-events:none;
+    z-index:1;
+  }
+  @keyframes sweepMove{
+    0%{ left:-60%; }
+    50%{ left:120%; }
+    100%{ left:120%; }
   }
 
+  /* state pulse effects */
+  @keyframes fxWin{
+    0%,100%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(168,85,247,0.05), 0 24px 56px rgba(0,0,0,0.55); }
+    45%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(90,255,194,0.35), 0 0 60px rgba(90,255,194,0.28), 0 24px 56px rgba(0,0,0,0.55); }
+  }
+  @keyframes fxLose{
+    0%,100%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(168,85,247,0.05), 0 24px 56px rgba(0,0,0,0.55); }
+    45%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(255,84,112,0.3), 0 0 55px rgba(168,85,247,0.24), 0 24px 56px rgba(0,0,0,0.55); }
+  }
+  @keyframes fxPush{
+    0%,100%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(168,85,247,0.05), 0 24px 56px rgba(0,0,0,0.55); }
+    45%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px rgba(220,220,230,0.22), 0 0 40px rgba(220,220,230,0.16), 0 24px 56px rgba(0,0,0,0.55); }
+  }
+  @keyframes fxBust{
+    0%,100%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(168,85,247,0.05), 0 24px 56px rgba(0,0,0,0.55); }
+    45%{ box-shadow: inset 0 0 70px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,84,112,0.4), 0 0 0 1px rgba(255,84,112,0.4), 0 0 60px rgba(255,84,112,0.3), 0 24px 56px rgba(0,0,0,0.55); }
+  }
+  .table.fx-win{ animation:fxWin .65s ease; }
+  .table.fx-lose{ animation:fxLose .65s ease; }
+  .table.fx-push{ animation:fxPush .5s ease; }
+  .table.fx-bust{ animation:fxBust .55s ease; }
+
+  @keyframes handShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px) rotate(-1.5deg); }
+    40%{ transform:translateX(5px) rotate(1.2deg); }
+    60%{ transform:translateX(-4px) rotate(-1deg); }
+    80%{ transform:translateX(3px) rotate(0.6deg); }
+  }
+  .subhand.shake, .zone#dealerZone.shake .hand{ animation:handShake .45s ease; }
+
   .zone{
+    position:relative;
+    z-index:2;
     text-align:center;
     min-height:210px;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:8px;
-    padding:6px 0;
+    gap:6px;
+    padding:4px 0;
   }
   .zone-label{
     font-size:0.72rem;
@@ -189,8 +282,8 @@
   .card{
     width:76px; height:108px;
     border-radius:9px;
-    background:var(--card-face);
-    border:1.5px solid var(--line);
+    background:linear-gradient(165deg, rgba(255,255,255,0.055), rgba(255,255,255,0) 45%), var(--card-face);
+    border:1px solid rgba(255,255,255,0.14);
     display:flex;
     flex-direction:column;
     justify-content:space-between;
@@ -198,15 +291,22 @@
     font-family:'Oxanium', sans-serif;
     font-weight:700;
     font-size:1.15rem;
+    color:#f2f3f7;
     position:relative;
-    animation: dealIn .5s cubic-bezier(.22,.85,.3,1.05) both;
+    animation: dealIn .52s cubic-bezier(.22,.85,.3,1.05) both;
     transform-origin:center;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      inset 0 -10px 18px rgba(0,0,0,0.35),
+      0 14px 24px rgba(0,0,0,0.5),
+      0 0 16px rgba(90,190,255,0.10),
+      0 0 22px rgba(160,100,255,0.06);
   }
   @keyframes dealIn{
-    0%{ transform:translate(150px,-170px) rotate(20deg) scale(0.55); opacity:0; filter:drop-shadow(0 2px 2px rgba(0,0,0,0)); }
-    50%{ opacity:1; filter:drop-shadow(0 18px 14px rgba(0,0,0,0.45)); }
-    78%{ transform:translate(-7px,3px) rotate(-3deg) scale(1.05); filter:drop-shadow(0 6px 6px rgba(0,0,0,0.3)); }
-    92%{ transform:translate(2px,-1px) rotate(1deg) scale(0.99); }
+    0%{ transform:translate(170px,-200px) rotate(26deg) scale(0.5); opacity:0; filter:drop-shadow(0 2px 2px rgba(0,0,0,0)); }
+    45%{ opacity:1; filter:drop-shadow(0 20px 16px rgba(0,0,0,0.4)); }
+    72%{ transform:translate(-8px,4px) rotate(-4deg) scale(1.06); filter:drop-shadow(0 6px 6px rgba(0,0,0,0.3)); }
+    88%{ transform:translate(3px,-2px) rotate(1.5deg) scale(0.98); }
     100%{ transform:translate(0,0) rotate(0) scale(1); opacity:1; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
   }
   @keyframes flipReveal{
@@ -214,17 +314,8 @@
     100%{ transform:rotateY(0deg) scale(1); opacity:1; }
   }
   .card.flip{ animation: flipReveal .45s ease both; }
+  .card.red{ color:#ff5f76; }
 
-  .card.mono{
-    color:var(--ink);
-    box-shadow:0 0 0 1px rgba(232,232,238,0.22), 0 0 14px rgba(232,232,238,0.14), inset 0 0 12px rgba(232,232,238,0.05);
-    border-color: rgba(232,232,238,0.4);
-  }
-  .card.red{
-    color:var(--card-red);
-    box-shadow:0 0 0 1px rgba(255,46,77,0.3), 0 0 18px rgba(255,46,77,0.3), inset 0 0 12px rgba(255,46,77,0.08);
-    border-color: rgba(255,46,77,0.55);
-  }
   .card .suit-big{
     align-self:center;
     font-size:1.7rem;
@@ -236,7 +327,7 @@
   .card.back{
     background:
       repeating-linear-gradient(135deg, #0d0d12 0 6px, #121218 6px 12px);
-    border:1.5px solid var(--line);
+    border:1px solid rgba(255,255,255,0.1);
     box-shadow:0 0 10px rgba(0,0,0,0.6);
     display:flex;
     align-items:center;
@@ -261,88 +352,133 @@
   .divider{
     height:1px;
     background:linear-gradient(90deg, transparent, var(--line), transparent);
-    margin:6px 0;
-  }
-
-  /* ===== Side bet spots ===== */
-  .siderow{
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    margin:6px 0 10px;
-    flex-wrap:wrap;
-  }
-  .sidebet{
-    width:160px;
-    flex:0 0 auto;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:11px;
-    text-align:center;
-    transition:border-color .15s, transform .1s;
+    margin:2px 0;
     position:relative;
+    z-index:2;
   }
-  .sidebet.armed{border-color:var(--magenta); box-shadow:0 0 14px rgba(255,79,216,0.25);}
-  .sidebet.win-flash{border-color:var(--gold); box-shadow:0 0 20px rgba(255,209,102,0.5); animation:pulseWin .5s ease-out;}
-  @keyframes pulseWin{ 0%{transform:scale(1);} 40%{transform:scale(1.05);} 100%{transform:scale(1);} }
-  .sidebet .title{font-size:0.74rem; color:var(--ink-dim); margin-bottom:4px; letter-spacing:0.8px;}
-  .sidebet .paytable{font-size:0.66rem; color:var(--ink-dim); margin-top:6px; line-height:1.5;}
-  .sidebet .paytable b{color:var(--cyan);}
-  .sidebet-result{
-    min-height:14px;
-    font-size:0.66rem;
-    font-weight:700;
-    color:var(--gold);
-    margin-top:5px;
-    opacity:0;
-    transform:translateY(-2px);
-    transition:opacity .2s, transform .2s;
-  }
-  .sidebet-result.show{opacity:1; transform:translateY(0);}
 
-  /* ===== Bet rail ===== */
-  .betrail{
-    margin-top:12px;
-    background:linear-gradient(180deg, var(--panel) 0%, #0d0d11 100%);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:12px;
-    box-shadow: 0 16px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-  .betrail .maintitle{font-size:0.7rem; color:var(--ink-dim); margin-bottom:10px; text-align:center; letter-spacing:0.3px;}
-
-  .betrow{
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .mainbet-col{
-    flex:1 1 240px;
-    max-width:300px;
+  .insurance-banner{
+    position:relative;
+    z-index:2;
     display:flex;
     flex-direction:column;
+    align-items:center;
     gap:8px;
+    background:var(--panel-2);
+    border:1px solid var(--gold);
+    box-shadow:0 0 18px rgba(255,209,102,0.2);
+    border-radius:12px;
+    padding:10px 14px;
+    margin-top:8px;
+    animation:insuranceIn .3s ease;
+  }
+  @keyframes insuranceIn{
+    from{ opacity:0; transform:translateY(-6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .insurance-text{font-size:0.85rem; color:var(--ink);}
+  .insurance-text b{color:var(--gold);}
+  .insurance-actions{display:flex; gap:8px;}
+
+  .message{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    min-height:24px;
+    font-family:'Oxanium',sans-serif;
+    font-weight:700;
+    font-size:0.92rem;
+    margin:8px 0 0;
+    color:var(--ink);
+    letter-spacing:0.3px;
+  }
+  .message.win{color:var(--gold); text-shadow:0 0 12px rgba(255,209,102,0.5);}
+  .message.lose{color:var(--danger);}
+  .message.push{color:var(--ink-dim);}
+
+  /* blackjack FX overlay */
+  .bj-fx{
+    position:absolute;
+    left:50%; top:38%;
+    transform:translate(-50%,-50%) scale(0.7);
+    font-family:'Oxanium',sans-serif;
+    font-weight:800;
+    font-size:1.4rem;
+    letter-spacing:2px;
+    color:var(--gold);
+    text-shadow:0 0 18px rgba(255,209,102,0.85), 0 0 36px rgba(255,209,102,0.5);
+    opacity:0;
+    z-index:5;
+    pointer-events:none;
+    animation:bjPop .9s ease forwards;
+  }
+  @keyframes bjPop{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(0.6); }
+    25%{ opacity:1; transform:translate(-50%,-50%) scale(1.08); }
+    75%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-58%) scale(1); }
+  }
+  .fx-particle{
+    position:absolute;
+    left:50%; top:38%;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 8px rgba(255,209,102,0.9);
+    z-index:5;
+    pointer-events:none;
+    animation:particleBurst 0.8s ease-out forwards;
+  }
+  @keyframes particleBurst{
+    0%{ transform:translate(-50%,-50%) translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(-50%,-50%) translate(var(--px), var(--py)) scale(0.2); opacity:0; }
   }
 
-  .betinput-row{
+  /* ===== Bet panel: one unified system ===== */
+  .betrail{
+    margin-top:12px;
     display:flex;
-    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:stretch;
   }
-  .betinput{
+  .bet-panel{
+    flex:1 1 300px;
+    background:linear-gradient(180deg, #14141a 0%, #0d0d11 100%);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    box-shadow:0 16px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .bet-panel-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+  }
+  .bet-label{font-size:0.72rem; color:var(--ink-dim); letter-spacing:1.5px; font-weight:700;}
+  .bet-sub{font-size:0.68rem; color:var(--ink-dim);}
+  .bet-sub b{color:var(--gold);}
+
+  .bet-stepper{
     display:flex;
     align-items:stretch;
-    width:100%;
-    max-width:360px;
     background:var(--panel-2);
     border:1px solid var(--line);
     border-radius:10px;
     overflow:hidden;
   }
-  .betinput:focus-within{border-color:var(--cyan); box-shadow:0 0 0 1px rgba(51,246,232,0.25);}
-  .betinput input[type=number]{
+  .bet-stepper:focus-within{border-color:var(--cyan); box-shadow:0 0 0 1px rgba(51,246,232,0.25);}
+  .bet-stepper .cur{
+    display:flex; align-items:center;
+    padding:0 10px;
+    color:var(--ink-dim);
+    font-size:0.9rem;
+    border-right:1px solid var(--line);
+  }
+  .bet-stepper input[type=number]{
     flex:1;
     min-width:0;
     background:transparent;
@@ -351,35 +487,159 @@
     color:var(--ink);
     font-family:'Oxanium',sans-serif;
     font-weight:700;
-    font-size:1.05rem;
-    padding:12px 10px;
+    font-size:1.15rem;
+    padding:13px 8px;
+    text-align:center;
   }
-  .betinput input[type=number]::-webkit-outer-spin-button,
-  .betinput input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-  .betinput input[type=number]{ -moz-appearance:textfield; }
-  .betinput .quick{
+  .bet-stepper input[type=number]::-webkit-outer-spin-button,
+  .bet-stepper input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .bet-stepper input[type=number]{ -moz-appearance:textfield; }
+  .stepbtn{
     border:none;
     border-left:1px solid var(--line);
     background:var(--panel);
     color:var(--ink-dim);
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:600;
-    font-size:0.82rem;
-    padding:0 14px;
+    font-family:'Oxanium',sans-serif;
+    font-weight:700;
+    font-size:1.1rem;
+    width:42px;
     cursor:pointer;
     transition:color .15s, background .15s;
   }
-  .betinput .quick:hover:not(:disabled){color:var(--cyan); background:var(--panel-2);}
-  .betinput .quick:disabled{opacity:0.35; cursor:not-allowed;}
-  .betinput .cur{
-    display:flex; align-items:center;
-    padding:0 10px;
-    color:var(--ink-dim);
-    font-size:0.85rem;
-    border-right:1px solid var(--line);
+  .stepbtn:hover:not(:disabled){color:var(--cyan); background:var(--panel-2);}
+  .stepbtn:disabled{opacity:0.35; cursor:not-allowed;}
+
+  .bet-quickrow{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
   }
+  .qchip{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.74rem;
+    letter-spacing:0.3px;
+    padding:8px 4px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--ink-dim);
+    cursor:pointer;
+    transition:border-color .15s, color .15s, transform .12s;
+  }
+  .qchip:hover:not(:disabled){border-color:var(--cyan); color:var(--cyan); transform:translateY(-1px);}
+  .qchip:disabled{opacity:0.35; cursor:not-allowed;}
+
+  .deal-btn{
+    height:56px;
+    border:none;
+    border-radius:14px;
+    font-family:'Oxanium',sans-serif;
+    font-weight:800;
+    font-size:1.1rem;
+    letter-spacing:1.5px;
+    color:#04211f;
+    background:linear-gradient(120deg, var(--cyan), #8dfff2, var(--cyan));
+    background-size:200% 100%;
+    animation:dealShimmer 3s ease-in-out infinite;
+    box-shadow:0 0 18px rgba(51,246,232,0.4), 0 10px 22px rgba(0,0,0,0.4);
+    cursor:pointer;
+    transition:transform .12s, box-shadow .15s, opacity .15s;
+  }
+  @keyframes dealShimmer{
+    0%,100%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+  }
+  .deal-btn:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 0 26px rgba(51,246,232,0.55), 0 14px 28px rgba(0,0,0,0.45); }
+  .deal-btn:active:not(:disabled){ transform:translateY(0); }
+  .deal-btn:disabled{ opacity:0.32; animation:none; cursor:not-allowed; box-shadow:none; }
+
+  .mini-links{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    font-size:0.74rem;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color:var(--ink-dim);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.74rem;
+    font-weight:600;
+    cursor:pointer;
+    padding:2px 4px;
+    transition:color .15s;
+  }
+  .link-btn:hover:not(:disabled){color:var(--cyan);}
+  .link-btn.danger:hover:not(:disabled){color:var(--danger);}
+  .link-btn:disabled{opacity:0.35; cursor:not-allowed;}
+  .mini-links .dot{color:var(--line);}
+
+  .actionrow{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .action-btn{
+    height:52px;
+    font-family:'Oxanium',sans-serif;
+    font-weight:700;
+    font-size:0.92rem;
+    letter-spacing:0.8px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg,#1c1c24,#141419);
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform .12s, box-shadow .15s, border-color .15s, color .15s, opacity .15s;
+  }
+  .action-btn:hover:not(:disabled){ border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px); box-shadow:0 6px 18px rgba(51,246,232,0.18); }
+  .action-btn:active:not(:disabled){ transform:translateY(0); }
+  .action-btn:disabled{ opacity:0.3; cursor:not-allowed; }
+
+  /* ===== Side bets: compact ===== */
+  .sidebets-row{
+    flex:0 1 300px;
+    display:flex;
+    gap:10px;
+  }
+  .sidebet-compact{
+    flex:1;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px;
+    transition:border-color .15s;
+    position:relative;
+  }
+  .sidebet-compact.armed{border-color:var(--magenta); box-shadow:0 0 14px rgba(255,79,216,0.2);}
+  .sidebet-compact.win-flash{border-color:var(--gold); box-shadow:0 0 20px rgba(255,209,102,0.5); animation:pulseWin .5s ease-out;}
+  @keyframes pulseWin{ 0%{transform:scale(1);} 40%{transform:scale(1.04);} 100%{transform:scale(1);} }
+
+  .sb-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:7px;
+  }
+  .sb-name{font-size:0.72rem; color:var(--ink-dim); letter-spacing:0.6px;}
+  .sb-info{
+    width:16px; height:16px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:none;
+    color:var(--ink-dim);
+    font-size:0.6rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:color .15s, border-color .15s;
+  }
+  .sb-info:hover, .sb-info.active{color:var(--cyan); border-color:var(--cyan);}
+
   .sidebet-input{
-    margin-top:8px;
     display:flex;
     align-items:stretch;
     background:var(--panel);
@@ -403,10 +663,7 @@
   .sidebet-input input[type=number]::-webkit-outer-spin-button,
   .sidebet-input input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
   .sidebet-input input[type=number]{ -moz-appearance:textfield; }
-  .sidebet-input input.win{
-    color:var(--gold);
-    text-shadow:0 0 10px rgba(255,209,102,0.65);
-  }
+  .sidebet-input input.win{ color:var(--gold); text-shadow:0 0 10px rgba(255,209,102,0.65); }
   .sidebet-input .squick{
     border:none;
     border-left:1px solid var(--line);
@@ -422,12 +679,30 @@
   .sidebet-input .squick:hover:not(:disabled){color:var(--cyan); background:var(--panel);}
   .sidebet-input .squick:disabled{opacity:0.35; cursor:not-allowed;}
 
-  .betcontrols{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    flex-wrap:wrap;
+  .sidebet-result{
+    min-height:14px;
+    font-size:0.66rem;
+    font-weight:700;
+    color:var(--gold);
+    margin-top:5px;
+    opacity:0;
+    transform:translateY(-2px);
+    transition:opacity .2s, transform .2s;
   }
+  .sidebet-result.show{opacity:1; transform:translateY(0);}
+
+  .paytable{
+    font-size:0.62rem;
+    color:var(--ink-dim);
+    line-height:1.5;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition:max-height .25s ease, opacity .2s, margin-top .25s ease;
+  }
+  .paytable b{color:var(--cyan);}
+  .paytable.expanded{ max-height:90px; opacity:1; margin-top:7px; }
+
   .btn{
     font-family:'Space Grotesk', sans-serif;
     font-weight:600;
@@ -449,53 +724,8 @@
     color:var(--cyan);
     text-shadow:0 0 8px rgba(51,246,232,0.4);
   }
-  .btn.danger{border-color:var(--danger); color:var(--danger);}
-  .btn.wide{min-width:96px;}
 
-  .actionrow{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    margin-top:10px;
-    flex-wrap:wrap;
-  }
-
-  .insurance-banner{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-    background:var(--panel-2);
-    border:1px solid var(--gold);
-    box-shadow:0 0 18px rgba(255,209,102,0.2);
-    border-radius:12px;
-    padding:10px 14px;
-    margin-top:8px;
-    animation:insuranceIn .3s ease;
-  }
-  @keyframes insuranceIn{
-    from{ opacity:0; transform:translateY(-6px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-  .insurance-text{font-size:0.85rem; color:var(--ink);}
-  .insurance-text b{color:var(--gold);}
-  .insurance-actions{display:flex; gap:8px;}
-
-  .message{
-    text-align:center;
-    min-height:24px;
-    font-family:'Oxanium',sans-serif;
-    font-weight:700;
-    font-size:0.92rem;
-    margin:8px 0 2px;
-    color:var(--ink);
-    letter-spacing:0.3px;
-  }
-  .message.win{color:var(--gold); text-shadow:0 0 12px rgba(255,209,102,0.5);}
-  .message.lose{color:var(--danger);}
-  .message.push{color:var(--ink-dim);}
-
-  /* ===== Settings modal (RTP) ===== */
+  /* ===== Settings modal ===== */
   .overlay{
     position:fixed; inset:0;
     background:rgba(4,4,6,0.75);
@@ -570,17 +800,23 @@
   .toggle.on{border-color:var(--cyan);}
   .toggle.on .knob{left:20px; background:var(--cyan);}
 
+  @media (max-width:640px){
+    .betrail{flex-direction:column;}
+    .sidebets-row{flex:1 1 auto;}
+  }
   @media (max-width:480px){
     .cardslot{width:58px; height:84px;}
     .card{width:58px; height:84px; font-size:0.88rem;}
     .card .suit-big{font-size:1.3rem;}
     .card .corner{font-size:0.68rem;}
     .card.back .back-mark{font-size:1.4rem;}
-    .sidebet{width:140px;}
+    .actionrow{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
 <body>
+
+<div id="ambient"></div>
 
 <div class="shell">
 
@@ -590,16 +826,21 @@
       <div class="tag">matte black · neon edge</div>
     </div>
     <div class="hud">
-      <div class="balance">
-        <span class="lbl">BALANCE</span>
-        <span class="val" id="balanceVal">1,000</span>
+      <div class="balance-hud">
+        <div class="coin"></div>
+        <div class="balance-text">
+          <span class="lbl">BALANCE</span>
+          <span class="val" id="balanceVal">1,000</span>
+        </div>
       </div>
       <div class="iconbtn" id="settingsBtn" title="Settings">⚙</div>
     </div>
   </div>
 
-  <div class="table">
-    <div class="zone">
+  <div class="table" id="tableEl">
+    <div class="sweep"></div>
+
+    <div class="zone" id="dealerZone">
       <div class="zone-label">DEALER <span class="score-pill" id="dealerScore">0</span></div>
       <div class="hand" id="dealerHand"></div>
     </div>
@@ -623,55 +864,73 @@
   </div>
 
   <div class="betrail">
-    <div class="maintitle">Enter your bet, then Deal · Blackjack pays <b style="color:var(--gold)">2.5x</b></div>
+    <div class="bet-panel">
+      <div class="bet-panel-header">
+        <span class="bet-label">BET</span>
+        <span class="bet-sub">Blackjack pays <b>2.5x</b></span>
+      </div>
 
-    <div class="betrow">
-      <div class="sidebet" id="sbPP" data-bet="0">
-        <div class="title">PERFECT PAIRS</div>
+      <div class="bet-stepper">
+        <span class="cur">$</span>
+        <input type="number" id="mainBetInput" min="0" step="1" placeholder="0.00" inputmode="numeric">
+        <button class="stepbtn" id="betMinus" type="button">−</button>
+        <button class="stepbtn" id="betPlus" type="button">+</button>
+      </div>
+
+      <div id="betControlsRow" style="display:flex; flex-direction:column; gap:10px;">
+        <div class="bet-quickrow">
+          <button class="qchip" id="halfBtn" type="button">½</button>
+          <button class="qchip" id="doubleBetBtn" type="button">2×</button>
+          <button class="qchip" id="minBtn" type="button">MIN</button>
+          <button class="qchip" id="maxBtn" type="button">MAX</button>
+        </div>
+        <button class="deal-btn" id="dealBtn" disabled>DEAL</button>
+        <div class="mini-links">
+          <button class="link-btn" id="repeatBtn" disabled>Repeat</button>
+          <span class="dot">·</span>
+          <button class="link-btn danger" id="clearBtn">Clear</button>
+        </div>
+      </div>
+
+      <div class="actionrow" id="actionRow" style="display:none;">
+        <button class="action-btn" id="hitBtn">HIT</button>
+        <button class="action-btn" id="standBtn">STAND</button>
+        <button class="action-btn" id="doubleBtn">DOUBLE</button>
+        <button class="action-btn" id="splitBtn">SPLIT</button>
+      </div>
+    </div>
+
+    <div class="sidebets-row">
+      <div class="sidebet-compact" id="sbPP">
+        <div class="sb-head">
+          <span class="sb-name">PERFECT PAIRS</span>
+          <button class="sb-info" type="button" data-target="ppInfo">i</button>
+        </div>
         <div class="sidebet-input">
           <input type="number" id="amtPP" min="0" step="1" placeholder="0" inputmode="numeric">
           <button class="squick" id="ppHalf" type="button">½</button>
           <button class="squick" id="ppDouble" type="button">2×</button>
         </div>
         <div class="sidebet-result" id="ppResult"></div>
-        <div class="paytable">
+        <div class="paytable" id="ppInfo">
           Perfect pair <b>25:1</b><br>
           Colored pair <b>12:1</b><br>
           Mixed pair <b>6:1</b>
         </div>
       </div>
 
-      <div class="mainbet-col">
-        <div class="betinput-row">
-          <div class="betinput">
-            <span class="cur">$</span>
-            <input type="number" id="mainBetInput" min="0" step="1" placeholder="0.00" inputmode="numeric">
-            <button class="quick" id="halfBtn" type="button">½</button>
-            <button class="quick" id="doubleBetBtn" type="button">2×</button>
-          </div>
+      <div class="sidebet-compact" id="sb21p3">
+        <div class="sb-head">
+          <span class="sb-name">21+3</span>
+          <button class="sb-info" type="button" data-target="tpInfo">i</button>
         </div>
-        <div class="betcontrols" id="betControlsRow">
-          <button class="btn" id="repeatBtn" disabled>Repeat</button>
-          <button class="btn danger" id="clearBtn">Clear</button>
-          <button class="btn primary wide" id="dealBtn" disabled>Deal</button>
-        </div>
-        <div class="actionrow" id="actionRow" style="display:none;">
-          <button class="btn" id="hitBtn">Hit</button>
-          <button class="btn" id="standBtn">Stand</button>
-          <button class="btn" id="doubleBtn">Double</button>
-          <button class="btn" id="splitBtn">Split</button>
-        </div>
-      </div>
-
-      <div class="sidebet" id="sb21p3" data-bet="0">
-        <div class="title">21+3</div>
         <div class="sidebet-input">
           <input type="number" id="amt21p3" min="0" step="1" placeholder="0" inputmode="numeric">
           <button class="squick" id="tpHalf" type="button">½</button>
           <button class="squick" id="tpDouble" type="button">2×</button>
         </div>
         <div class="sidebet-result" id="tpResult"></div>
-        <div class="paytable">
+        <div class="paytable" id="tpInfo">
           Suited trips <b>100:1</b><br>
           Straight flush <b>40:1</b> · Trips <b>30:1</b><br>
           Straight <b>10:1</b> · Flush <b>5:1</b>
@@ -704,7 +963,7 @@
       <div class="stat"><div class="k">Live RTP</div><div class="v" id="statLiveRTP">—</div></div>
     </div>
     <div class="note">
-      This nudges the shoe by swapping upcoming cards toward the player or the dealer depending on how far live RTP has drifted from the target — it does not touch fixed side-bet payouts. This is a simulation lever for demos/testing; a live real-money product needs a certified RNG and regulatory sign-off before RTP can legally be tuned like this.
+      This gives your own cards a small, probability-weighted tilt toward better or worse value — never a guaranteed card — and only once live RTP has drifted more than 3 points from target. It leaves the dealer's cards and all side-bet math untouched, so suit and rank distribution stay statistically realistic. This is a simulation lever for demos/testing; a live real-money product needs a certified RNG and regulatory sign-off before RTP can legally be tuned like this.
     </div>
     <div class="modal-actions">
       <button class="btn" id="resetStatsBtn">Reset stats</button>
@@ -716,6 +975,26 @@
 <script>
 (function(){
   "use strict";
+
+  // ---------- Ambient particles ----------
+  (function initAmbient(){
+    const container = document.getElementById('ambient');
+    const colors = ['rgba(51,246,232,0.5)','rgba(168,85,247,0.5)','rgba(255,209,102,0.35)'];
+    const N = 10;
+    for(let i=0;i<N;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 2 + Math.random()*3;
+      p.style.width = size+'px';
+      p.style.height = size+'px';
+      p.style.left = (Math.random()*100)+'vw';
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty('--drift', (Math.random()*60-30)+'px');
+      p.style.animationDuration = (14 + Math.random()*12)+'s';
+      p.style.animationDelay = (Math.random()*14)+'s';
+      container.appendChild(p);
+    }
+  })();
 
   // ---------- Config ----------
   const SUITS = [
@@ -734,25 +1013,28 @@
     twentyOnePlus3: { flush:5, straight:10, straightFlush:40, trips:30, suitedTrips:100 }
   };
 
-  const DEAL_GAP = 480;     // ms between cards during initial deal
-  const HIT_GAP = 460;      // ms to let a hit card land before continuing
-  const DEALER_GAP = 700;   // ms between dealer's own hits
-  const REVEAL_DELAY = 800; // ms pause before flipping the hole card
+  const DEAL_GAP = 480;
+  const HIT_GAP = 460;
+  const DEALER_GAP = 700;
+  const REVEAL_DELAY = 800;
+  const TABLE_MIN = 10;
+  const BET_STEP = 5;
 
   // ---------- State ----------
   let shoe = [];
   let discard = [];
   let balance = 1000;
+  let displayedBalance = 1000;
   let mainBet = 0;
   let sideBets = { pp:0, tp3:0 };
   let dealer = { cards:[] };
   let hands = [];
   let activeHandIdx = 0;
-  let phase = 'betting'; // betting | dealing | player | dealer | resolved
+  let phase = 'betting';
   let targetRTP = 0.98;
   let stats = { hands:0, wagered:0, paid:0 };
   let soundOn = true;
-  let lastBet = null; // {main, pp, tp3}
+  let lastBet = null;
   let insuranceNote = '';
 
   const el = id => document.getElementById(id);
@@ -804,6 +1086,41 @@
   function playLose(){ if(!soundOn) return; playTone(160,0.3,'sawtooth',0.10); }
   function playClick(){ if(!soundOn) return; playTone(520,0.04,'square',0.05); }
 
+  // ---------- Table state-effects ----------
+  function tableEffect(type){
+    const t = el('tableEl');
+    ['fx-win','fx-lose','fx-push','fx-bust'].forEach(c=>t.classList.remove(c));
+    void t.offsetWidth;
+    t.classList.add('fx-'+type);
+    setTimeout(()=> t.classList.remove('fx-'+type), 700);
+  }
+  function shakeHand(wrapperEl){
+    if(!wrapperEl) return;
+    wrapperEl.classList.remove('shake');
+    void wrapperEl.offsetWidth;
+    wrapperEl.classList.add('shake');
+    setTimeout(()=> wrapperEl.classList.remove('shake'), 500);
+  }
+  function showBlackjackFX(){
+    const table = el('tableEl');
+    const fx = document.createElement('div');
+    fx.className = 'bj-fx';
+    fx.textContent = '✦ BLACKJACK ✦';
+    table.appendChild(fx);
+    for(let i=0;i<10;i++){
+      const p = document.createElement('div');
+      p.className = 'fx-particle';
+      const angle = (Math.PI*2*i)/10 + Math.random()*0.3;
+      const dist = 40 + Math.random()*40;
+      p.style.setProperty('--px', (Math.cos(angle)*dist)+'px');
+      p.style.setProperty('--py', (Math.sin(angle)*dist)+'px');
+      p.style.animationDelay = (Math.random()*0.15)+'s';
+      table.appendChild(p);
+      setTimeout(()=> p.remove(), 1100);
+    }
+    setTimeout(()=> fx.remove(), 950);
+  }
+
   // ---------- Deck / shoe ----------
   function freshShoe(){
     let d = [];
@@ -837,22 +1154,38 @@
   function drawCard(opts){
     opts = opts || {};
     ensureShoe();
-    const liveRTP = stats.wagered > 0 ? stats.paid/stats.wagered : targetRTP;
-    const favorPlayer = liveRTP < targetRTP;
-    const windowSize = Math.min(10, shoe.length);
-    if(opts.biasable && windowSize > 1){
-      let bestIdx = 0;
-      let bestScore = favorPlayer ? -Infinity : Infinity;
-      for(let i=0;i<windowSize;i++){
-        const c = shoe[i];
-        let score = opts.forDealer ? -c.value : c.value;
-        if(favorPlayer){ if(score > bestScore){bestScore=score; bestIdx=i;} }
-        else{ if(score < bestScore){bestScore=score; bestIdx=i;} }
+
+    if(opts.biasable){
+      const liveRTP = stats.wagered > 0 ? stats.paid/stats.wagered : targetRTP;
+      const drift = liveRTP - targetRTP;
+      const deadband = 0.03;
+
+      if(Math.abs(drift) > deadband && shoe.length > 12){
+        const favorPlayer = drift < 0;
+        const windowSize = Math.min(8, shoe.length);
+        const strength = Math.min(Math.abs(drift), 0.10) * 3.5;
+        let weights = [];
+        let total = 0;
+        for(let i=0;i<windowSize;i++){
+          const c = shoe[i];
+          const favorable = opts.forDealer ? -c.value : c.value;
+          const signed = favorPlayer ? favorable : -favorable;
+          const w = Math.exp(strength * (signed/11));
+          weights.push(w);
+          total += w;
+        }
+        let r = Math.random() * total;
+        let idx = windowSize - 1;
+        for(let i=0;i<windowSize;i++){
+          if(r < weights[i]){ idx = i; break; }
+          r -= weights[i];
+        }
+        const [card] = shoe.splice(idx,1);
+        discard.push(card);
+        return card;
       }
-      const [card] = shoe.splice(bestIdx,1);
-      discard.push(card);
-      return card;
     }
+
     const card = shoe.shift();
     discard.push(card);
     return card;
@@ -988,7 +1321,24 @@
     el('repeatBtn').disabled = !lastBet || phase!=='betting' || repeatTotal>balance;
   }
 
-  function renderBalance(){ el('balanceVal').textContent = money(balance); }
+  // ---------- Animated balance HUD ----------
+  function animateBalance(target){
+    const start = displayedBalance;
+    const delta = target - start;
+    if(Math.abs(delta) < 0.5){ displayedBalance = target; el('balanceVal').textContent = money(target); return; }
+    const dur = 550;
+    const t0 = performance.now();
+    function step(now){
+      const p = Math.min(1, (now-t0)/dur);
+      const eased = 1 - Math.pow(1-p, 3);
+      displayedBalance = start + delta*eased;
+      el('balanceVal').textContent = money(displayedBalance);
+      if(p < 1) requestAnimationFrame(step);
+      else { displayedBalance = target; el('balanceVal').textContent = money(target); }
+    }
+    requestAnimationFrame(step);
+  }
+  function renderBalance(){ animateBalance(balance); }
 
   function setMessage(text, cls){
     const m = el('message');
@@ -997,7 +1347,7 @@
   }
 
   function disableBetControls(state){
-    ['mainBetInput','amt21p3','amtPP','halfBtn','doubleBetBtn','clearBtn','repeatBtn','ppHalf','ppDouble','tpHalf','tpDouble'].forEach(id=> el(id).disabled = state);
+    ['mainBetInput','amt21p3','amtPP','halfBtn','doubleBetBtn','clearBtn','repeatBtn','ppHalf','ppDouble','tpHalf','tpDouble','betMinus','betPlus','minBtn','maxBtn'].forEach(id=> el(id).disabled = state);
     el('dealBtn').disabled = state || mainBet<=0 || phase!=='betting';
     if(!state) renderBetRail();
   }
@@ -1025,6 +1375,31 @@
     if(mainBet<=0){ e.target.value=''; setMessage('Place a main bet first'); return; }
     sideBets.pp = clampNonNeg(parseFloat(e.target.value));
     el('sbPP').classList.toggle('armed', sideBets.pp>0);
+  });
+
+  el('betMinus').addEventListener('click', ()=>{
+    if(phase!=='betting') return;
+    playClick();
+    mainBet = Math.max(0, mainBet - BET_STEP);
+    renderBetRail();
+  });
+  el('betPlus').addEventListener('click', ()=>{
+    if(phase!=='betting') return;
+    playClick();
+    if(mainBet + BET_STEP <= balance) mainBet += BET_STEP;
+    renderBetRail();
+  });
+  el('minBtn').addEventListener('click', ()=>{
+    if(phase!=='betting') return;
+    playClick();
+    mainBet = Math.min(TABLE_MIN, balance);
+    renderBetRail();
+  });
+  el('maxBtn').addEventListener('click', ()=>{
+    if(phase!=='betting') return;
+    playClick();
+    mainBet = balance;
+    renderBetRail();
   });
   el('halfBtn').addEventListener('click', ()=>{
     if(phase!=='betting') return;
@@ -1065,6 +1440,14 @@
   el('ppDouble').addEventListener('click', ()=>{ playClick(); adjustSideBet('pp','double'); });
   el('tpHalf').addEventListener('click', ()=>{ playClick(); adjustSideBet('tp3','half'); });
   el('tpDouble').addEventListener('click', ()=>{ playClick(); adjustSideBet('tp3','double'); });
+
+  document.querySelectorAll('.sb-info').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = el(btn.dataset.target);
+      target.classList.toggle('expanded');
+      btn.classList.toggle('active');
+    });
+  });
 
   // ---------- Dealing sequence ----------
   el('dealBtn').addEventListener('click', startHand);
@@ -1120,7 +1503,7 @@
         revealDealerHole();
         await sleep(450);
         if(insuranceBet>0){
-          const insReturn = insuranceBet*3; // 2:1 profit + stake back
+          const insReturn = insuranceBet*3;
           balance += insReturn;
           renderBalance();
           insuranceNote = ' · Insurance pays 2:1 (+$'+money(insReturn-insuranceBet)+')';
@@ -1140,7 +1523,7 @@
       return;
     }
 
-    el('actionRow').style.display='flex';
+    el('actionRow').style.display='grid';
     disableActionButtons(false);
     updateActionButtons();
     if(!sideWon) setMessage('Your move');
@@ -1219,8 +1602,7 @@
         anyWin = true;
       }
     }
-    if(anyWin) playBigWin();
-    renderBalance();
+    if(anyWin){ playBigWin(); renderBalance(); tableEffect('win'); }
     return anyWin;
   }
   function flashSidebet(id){
@@ -1373,7 +1755,11 @@
     hands.forEach((h,idx)=>{
       const pVal = handValue(h.cards);
       const label = hands.length>1 ? 'Hand '+(idx+1)+': ' : '';
-      if(pVal>21){ h.result='lose'; msgs.push(label+'Bust'); return; }
+      if(pVal>21){
+        h.result='lose'; msgs.push(label+'Bust');
+        shakeHand(h.wrapperEl);
+        return;
+      }
 
       const playerBJ = isBlackjack(h.cards) && !h.isSplit && hands.length===1;
       if(playerBJ && !dealerBJ){
@@ -1394,12 +1780,17 @@
 
     const anyWin = hands.some(h=>h.result==='win'||h.result==='blackjack');
     const anyLose = hands.some(h=>h.result==='lose');
+    const anyBust = hands.some(h=>handValue(h.cards)>21);
+    const anyBJ = hands.some(h=>h.result==='blackjack');
     const cls = anyWin && !anyLose ? 'win' : (anyLose && !anyWin ? 'lose' : 'push');
     setMessage(msgs.join('  ·  ') + insuranceNote, cls);
     insuranceNote = '';
 
-    if(anyWin) (hands.some(h=>h.result==='blackjack') ? playBigWin() : playWin());
-    else if(anyLose && !anyWin) playLose();
+    if(anyBJ){ showBlackjackFX(); tableEffect('win'); playBigWin(); }
+    else if(anyBust && anyLose && !anyWin){ tableEffect('bust'); playLose(); }
+    else if(anyWin && !anyLose){ tableEffect('win'); playWin(); }
+    else if(anyLose && !anyWin){ tableEffect('lose'); playLose(); }
+    else { tableEffect('push'); }
 
     refreshStatsPanel();
     setTimeout(resetForNextBet, 1500);
@@ -1455,7 +1846,7 @@
   }
 
   // ---------- Init ----------
-  renderBalance();
+  el('balanceVal').textContent = money(balance);
   renderBetRail();
   refreshStatsPanel();
 })();
