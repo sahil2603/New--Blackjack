@@ -439,11 +439,12 @@
     margin-top:12px;
     display:flex;
     gap:12px;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
     align-items:stretch;
   }
   .bet-panel{
     flex:1 1 300px;
+    min-width:0;
     background:linear-gradient(180deg, #14141a 0%, #0d0d11 100%);
     border:1px solid var(--line);
     border-radius:16px;
@@ -602,6 +603,7 @@
   /* ===== Side bets: compact ===== */
   .sidebets-row{
     flex:0 1 300px;
+    min-width:0;
     display:flex;
     gap:10px;
   }
@@ -800,7 +802,7 @@
   .toggle.on{border-color:var(--cyan);}
   .toggle.on .knob{left:20px; background:var(--cyan);}
 
-  @media (max-width:640px){
+  @media (max-width:760px){
     .betrail{flex-direction:column;}
     .sidebets-row{flex:1 1 auto;}
   }
